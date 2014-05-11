@@ -1,17 +1,16 @@
-package model.Kladionica;
+package model.Migracija;
 
-public class Listic implements java.io.Serializable,
+public class Foo implements java.io.Serializable,
         com.dslplatform.patterns.AggregateRoot {
-    public Listic() {
+    public Foo() {
         _serviceLocator = com.dslplatform.client.Bootstrap.getLocator();
         _domainProxy = _serviceLocator
                 .resolve(com.dslplatform.client.DomainProxy.class);
         _crudProxy = _serviceLocator
                 .resolve(com.dslplatform.client.CrudProxy.class);
         this.ID = 0;
-        this.parovi = new java.util.ArrayList<model.Kladionica.Ponuda>();
-        this.datumUplate = org.joda.time.LocalDate.now();
-        this.iznos = java.math.BigDecimal.ZERO;
+        this.bar = "";
+        this.quxMigrated = 0;
     }
 
     private transient final com.dslplatform.patterns.ServiceLocator _serviceLocator;
@@ -36,41 +35,39 @@ public class Listic implements java.io.Serializable,
         if (obj == null) return false;
 
         if (getClass() != obj.getClass()) return false;
-        final Listic other = (Listic) obj;
+        final Foo other = (Foo) obj;
 
         return URI != null && URI.equals(other.URI);
     }
 
     @Override
     public String toString() {
-        return URI != null ? "Listic(" + URI + ')' : "new Listic("
-                + super.hashCode() + ')';
+        return URI != null ? "Foo(" + URI + ')' : "new Foo(" + super.hashCode()
+                + ')';
     }
 
     private static final long serialVersionUID = 0x0097000a;
 
-    public Listic(
-            final java.util.List<model.Kladionica.Ponuda> parovi,
-            final org.joda.time.LocalDate datumUplate,
-            final java.math.BigDecimal iznos) {
+    public Foo(
+            final String bar,
+            final model.Migracija.Baz baz) {
         _serviceLocator = com.dslplatform.client.Bootstrap.getLocator();
         _domainProxy = _serviceLocator
                 .resolve(com.dslplatform.client.DomainProxy.class);
         _crudProxy = _serviceLocator
                 .resolve(com.dslplatform.client.CrudProxy.class);
-        setParovi(parovi);
-        setDatumUplate(datumUplate);
-        setIznos(iznos);
+        setBar(bar);
+        setBaz(baz);
     }
 
     @com.fasterxml.jackson.annotation.JsonCreator
-    private Listic(
+    private Foo(
             @com.fasterxml.jackson.annotation.JacksonInject("_serviceLocator") final com.dslplatform.patterns.ServiceLocator _serviceLocator,
             @com.fasterxml.jackson.annotation.JsonProperty("URI") final String URI,
             @com.fasterxml.jackson.annotation.JsonProperty("ID") final int ID,
-            @com.fasterxml.jackson.annotation.JsonProperty("paroviURI") final String[] paroviURI,
-            @com.fasterxml.jackson.annotation.JsonProperty("datumUplate") final org.joda.time.LocalDate datumUplate,
-            @com.fasterxml.jackson.annotation.JsonProperty("iznos") final java.math.BigDecimal iznos) {
+            @com.fasterxml.jackson.annotation.JsonProperty("bar") final String bar,
+            @com.fasterxml.jackson.annotation.JsonProperty("baz") final model.Migracija.Baz baz,
+            @com.fasterxml.jackson.annotation.JsonProperty("quxMigrated") final int quxMigrated) {
         this._serviceLocator = _serviceLocator;
         this._domainProxy = _serviceLocator
                 .resolve(com.dslplatform.client.DomainProxy.class);
@@ -78,10 +75,9 @@ public class Listic implements java.io.Serializable,
                 .resolve(com.dslplatform.client.CrudProxy.class);
         this.URI = URI;
         this.ID = ID;
-        this.paroviURI = paroviURI == null ? new String[0] : paroviURI;
-        this.datumUplate = datumUplate == null ? new org.joda.time.LocalDate(1,
-                1, 1) : datumUplate;
-        this.iznos = iznos == null ? java.math.BigDecimal.ZERO : iznos;
+        this.bar = bar == null ? "" : bar;
+        this.baz = baz == null ? null : baz;
+        this.quxMigrated = quxMigrated;
     }
 
     private int ID;
@@ -92,17 +88,18 @@ public class Listic implements java.io.Serializable,
         return ID;
     }
 
-    private Listic setID(final int value) {
+    private Foo setID(final int value) {
         this.ID = value;
 
+        if (this.baz != null) this.baz.setFooID(value);
         return this;
     }
 
-    public static Listic find(final String uri) throws java.io.IOException {
+    public static Foo find(final String uri) throws java.io.IOException {
         return find(uri, com.dslplatform.client.Bootstrap.getLocator());
     }
 
-    public static Listic find(
+    public static Foo find(
             final String uri,
             final com.dslplatform.patterns.ServiceLocator locator)
             throws java.io.IOException {
@@ -111,7 +108,7 @@ public class Listic implements java.io.Serializable,
                     ? locator
                     : com.dslplatform.client.Bootstrap.getLocator())
                     .resolve(com.dslplatform.client.CrudProxy.class)
-                    .read(Listic.class, uri).get();
+                    .read(Foo.class, uri).get();
         } catch (final InterruptedException e) {
             throw new java.io.IOException(e);
         } catch (final java.util.concurrent.ExecutionException e) {
@@ -119,12 +116,12 @@ public class Listic implements java.io.Serializable,
         }
     }
 
-    public static java.util.List<Listic> find(final Iterable<String> uris)
+    public static java.util.List<Foo> find(final Iterable<String> uris)
             throws java.io.IOException {
         return find(uris, com.dslplatform.client.Bootstrap.getLocator());
     }
 
-    public static java.util.List<Listic> find(
+    public static java.util.List<Foo> find(
             final Iterable<String> uris,
             final com.dslplatform.patterns.ServiceLocator locator)
             throws java.io.IOException {
@@ -133,7 +130,7 @@ public class Listic implements java.io.Serializable,
                     ? locator
                     : com.dslplatform.client.Bootstrap.getLocator())
                     .resolve(com.dslplatform.client.DomainProxy.class)
-                    .find(Listic.class, uris).get();
+                    .find(Foo.class, uris).get();
         } catch (final InterruptedException e) {
             throw new java.io.IOException(e);
         } catch (final java.util.concurrent.ExecutionException e) {
@@ -141,25 +138,25 @@ public class Listic implements java.io.Serializable,
         }
     }
 
-    public static java.util.List<Listic> findAll() throws java.io.IOException {
+    public static java.util.List<Foo> findAll() throws java.io.IOException {
         return findAll(null, null,
                 com.dslplatform.client.Bootstrap.getLocator());
     }
 
-    public static java.util.List<Listic> findAll(
+    public static java.util.List<Foo> findAll(
             final com.dslplatform.patterns.ServiceLocator locator)
             throws java.io.IOException {
         return findAll(null, null, locator);
     }
 
-    public static java.util.List<Listic> findAll(
+    public static java.util.List<Foo> findAll(
             final Integer limit,
             final Integer offset) throws java.io.IOException {
         return findAll(limit, offset,
                 com.dslplatform.client.Bootstrap.getLocator());
     }
 
-    public static java.util.List<Listic> findAll(
+    public static java.util.List<Foo> findAll(
             final Integer limit,
             final Integer offset,
             final com.dslplatform.patterns.ServiceLocator locator)
@@ -169,7 +166,7 @@ public class Listic implements java.io.Serializable,
                     ? locator
                     : com.dslplatform.client.Bootstrap.getLocator())
                     .resolve(com.dslplatform.client.DomainProxy.class)
-                    .findAll(Listic.class, limit, offset, null).get();
+                    .findAll(Foo.class, limit, offset, null).get();
         } catch (final InterruptedException e) {
             throw new java.io.IOException(e);
         } catch (final java.util.concurrent.ExecutionException e) {
@@ -177,30 +174,30 @@ public class Listic implements java.io.Serializable,
         }
     }
 
-    public static java.util.List<Listic> search(
-            final com.dslplatform.patterns.Specification<Listic> specification)
+    public static java.util.List<Foo> search(
+            final com.dslplatform.patterns.Specification<Foo> specification)
             throws java.io.IOException {
         return search(specification, null, null,
                 com.dslplatform.client.Bootstrap.getLocator());
     }
 
-    public static java.util.List<Listic> search(
-            final com.dslplatform.patterns.Specification<Listic> specification,
+    public static java.util.List<Foo> search(
+            final com.dslplatform.patterns.Specification<Foo> specification,
             final com.dslplatform.patterns.ServiceLocator locator)
             throws java.io.IOException {
         return search(specification, null, null, locator);
     }
 
-    public static java.util.List<Listic> search(
-            final com.dslplatform.patterns.Specification<Listic> specification,
+    public static java.util.List<Foo> search(
+            final com.dslplatform.patterns.Specification<Foo> specification,
             final Integer limit,
             final Integer offset) throws java.io.IOException {
         return search(specification, limit, offset,
                 com.dslplatform.client.Bootstrap.getLocator());
     }
 
-    public static java.util.List<Listic> search(
-            final com.dslplatform.patterns.Specification<Listic> specification,
+    public static java.util.List<Foo> search(
+            final com.dslplatform.patterns.Specification<Foo> specification,
             final Integer limit,
             final Integer offset,
             final com.dslplatform.patterns.ServiceLocator locator)
@@ -230,7 +227,7 @@ public class Listic implements java.io.Serializable,
                     ? locator
                     : com.dslplatform.client.Bootstrap.getLocator())
                     .resolve(com.dslplatform.client.DomainProxy.class)
-                    .count(Listic.class).get().longValue();
+                    .count(Foo.class).get().longValue();
         } catch (final InterruptedException e) {
             throw new java.io.IOException(e);
         } catch (final java.util.concurrent.ExecutionException e) {
@@ -239,14 +236,14 @@ public class Listic implements java.io.Serializable,
     }
 
     public static long count(
-            final com.dslplatform.patterns.Specification<Listic> specification)
+            final com.dslplatform.patterns.Specification<Foo> specification)
             throws java.io.IOException {
         return count(specification,
                 com.dslplatform.client.Bootstrap.getLocator());
     }
 
     public static long count(
-            final com.dslplatform.patterns.Specification<Listic> specification,
+            final com.dslplatform.patterns.Specification<Foo> specification,
             final com.dslplatform.patterns.ServiceLocator locator)
             throws java.io.IOException {
         try {
@@ -262,18 +259,17 @@ public class Listic implements java.io.Serializable,
         }
     }
 
-    private void updateWithAnother(final model.Kladionica.Listic result) {
+    private void updateWithAnother(final model.Migracija.Foo result) {
         this.URI = result.URI;
 
-        this.parovi = result.parovi;
-        this.paroviURI = result.paroviURI;
-        this.datumUplate = result.datumUplate;
-        this.iznos = result.iznos;
+        this.bar = result.bar;
+        this.baz = result.baz;
+        this.quxMigrated = result.quxMigrated;
         this.ID = result.ID;
     }
 
-    public Listic persist() throws java.io.IOException {
-        final Listic result;
+    public Foo persist() throws java.io.IOException {
+        final Foo result;
         try {
             result = this.URI == null
                     ? _crudProxy.create(this).get()
@@ -287,9 +283,9 @@ public class Listic implements java.io.Serializable,
         return this;
     }
 
-    public Listic delete() throws java.io.IOException {
+    public Foo delete() throws java.io.IOException {
         try {
-            return _crudProxy.delete(Listic.class, URI).get();
+            return _crudProxy.delete(Foo.class, URI).get();
         } catch (final InterruptedException e) {
             throw new java.io.IOException(e);
         } catch (final java.util.concurrent.ExecutionException e) {
@@ -297,85 +293,44 @@ public class Listic implements java.io.Serializable,
         }
     }
 
-    private java.util.List<model.Kladionica.Ponuda> parovi;
+    private String bar;
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public java.util.List<model.Kladionica.Ponuda> getParovi()
-            throws java.io.IOException {
-        if (paroviURI != null
-                && (parovi == null || parovi.size() != paroviURI.length))
-            try {
-                parovi = _domainProxy.find(model.Kladionica.Ponuda.class,
-                        paroviURI).get();
-            } catch (final InterruptedException e) {
-                throw new java.io.IOException(e);
-            } catch (final java.util.concurrent.ExecutionException e) {
-                throw new java.io.IOException(e);
-            }
-        return parovi;
+    @com.fasterxml.jackson.annotation.JsonProperty("bar")
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
+    public String getBar() {
+        return bar;
     }
 
-    public Listic setParovi(final java.util.List<model.Kladionica.Ponuda> value) {
+    public Foo setBar(final String value) {
         if (value == null)
             throw new IllegalArgumentException(
-                    "Property \"parovi\" cannot be null!");
-        model.Guards.checkNulls(value);
-
-        if (value != null) {
-            for (final model.Kladionica.Ponuda refEnt : value)
-                if (refEnt == null || refEnt.getURI() == null)
-                    throw new IllegalArgumentException(
-                            "Reference \"Kladionica.Ponuda\" for property \"parovi\" must be persisted before it's assigned");
-        }
-        this.parovi = value;
-
-        this.paroviURI = new String[value.size()];
-        int _i = 0;
-        for (final model.Kladionica.Ponuda _it : value) {
-            this.paroviURI[_i++] = _it.getURI();
-        }
-        return this;
-    }
-
-    private String[] paroviURI;
-
-    @com.fasterxml.jackson.annotation.JsonProperty("paroviURI")
-    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-    public String[] getParoviURI() {
-        return this.paroviURI;
-    }
-
-    private org.joda.time.LocalDate datumUplate;
-
-    @com.fasterxml.jackson.annotation.JsonProperty("datumUplate")
-    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-    public org.joda.time.LocalDate getDatumUplate() {
-        return datumUplate;
-    }
-
-    public Listic setDatumUplate(final org.joda.time.LocalDate value) {
-        if (value == null)
-            throw new IllegalArgumentException(
-                    "Property \"datumUplate\" cannot be null!");
-        this.datumUplate = value;
+                    "Property \"bar\" cannot be null!");
+        this.bar = value;
 
         return this;
     }
 
-    private java.math.BigDecimal iznos;
+    private model.Migracija.Baz baz;
 
-    @com.fasterxml.jackson.annotation.JsonProperty("iznos")
-    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-    public java.math.BigDecimal getIznos() {
-        return iznos;
+    @com.fasterxml.jackson.annotation.JsonProperty("baz")
+    public model.Migracija.Baz getBaz() {
+        return baz;
     }
 
-    public Listic setIznos(final java.math.BigDecimal value) {
+    public Foo setBaz(final model.Migracija.Baz value) {
         if (value == null)
             throw new IllegalArgumentException(
-                    "Property \"iznos\" cannot be null!");
-        this.iznos = value;
+                    "Property \"baz\" cannot be null!");
+        this.baz = value;
 
+        if (this.baz != null) this.baz.setFooID(this.ID);
         return this;
+    }
+
+    private int quxMigrated;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("quxMigrated")
+    public int getQuxMigrated() {
+        return this.quxMigrated;
     }
 }

@@ -3,15 +3,14 @@ package model;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import model.Kladionica.Listic;
 import model.Kladionica.Ponuda;
 import model.Kladionica.Tekma;
-import model.Kladionica.repositories.ListicRepository;
-import model.Kladionica.repositories.TekmaRepository;
-import model.Migracija.Baz;
-import model.Migracija.Foo;
+import model.Kladionica.UplaceniListic;
+import model.Kladionica.repositories.*;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -27,9 +26,8 @@ public class Main {
     final ServiceLocator locator = init();
     Logger logger = locator.resolve(Logger.class);
 
-    Baz baz = new Baz().setQux(100);
-    Foo foo = new Foo().setBar("DINAMO").setBaz(baz);
-    foo.persist();
+
+    stvoriPonude(locator, logger);
 
     // Perform cleanup.
     shutdown(locator);
@@ -59,29 +57,46 @@ public class Main {
       locator.resolve(java.util.concurrent.ExecutorService.class).shutdown();
   }
 
-  private static void doTekma(ServiceLocator locator, Logger logger) throws Exception {
-    Tekma derbi = new Tekma().setDatumTekme(DateTime.now()).setDomacin("Hajduk").setGost("Rijeka");
-    derbi.persist();
+  private static void stvoriPonude(ServiceLocator locator, Logger logger) throws Exception {
+    Tekma tekma = new Tekma()
+      .setDatumTekme(DateTime.now())
+      .setDomacin("Hajduk")
+      .setGost("Rijeka");
 
-    Tekma tekma = new TekmaRepository(locator).find("1001").get();
-    Ponuda ponuda1 = new Ponuda().setTekma(tekma).setTip("Iks").setKoeficijent(new BigDecimal("1.1")).setIstekla(false);
-    Ponuda ponuda2 = new Ponuda().setTekma(tekma).setTip("Jedan").setKoeficijent(new BigDecimal("1.01")).setIstekla(false);
-    Ponuda ponuda3 = new Ponuda().setTekma(tekma).setTip("Jedan").setKoeficijent(new BigDecimal("1.2")).setIstekla(false);
+    Ponuda ponuda1X = new Ponuda()
+      .setTekma(tekma)
+      .setTip("Iks")
+      .setKoeficijent(new BigDecimal("1.1"))
+      .setIstekla(false);
 
-    List<Ponuda> parovi = new ArrayList<Ponuda>();
-    parovi.add(ponuda1);
-    parovi.add(ponuda2);
-    parovi.add(ponuda3);
+    ponuda1X.persist();
 
-    Listic listic = new Listic().setDatumUplate(LocalDate.now()).setIznos(new BigDecimal(100)).setParovi(parovi);
+    Ponuda ponuda11 = new Ponuda()
+      .setTekma(tekma)
+      .setTip("Jedan")
+      .setKoeficijent(new BigDecimal("1.01"))
+      .setIstekla(false);
+
+    ponuda11.persist();
+
+    Ponuda ponuda12 = new Ponuda()
+      .setTekma(tekma)
+      .setTip("Dva")
+      .setKoeficijent(new BigDecimal("1.2"))
+      .setIstekla(false);
+
+    ponuda12.persist();
+
+    Listic listic = new Listic()
+      .setDatumUplate(LocalDate.now())
+      .setIznos(new BigDecimal(100))
+      .setParovi(Arrays.asList(ponuda11, ponuda12, ponuda1X));
 
     listic.persist();
 
 
-    ListicRepository lRep = new ListicRepository(locator);
-    List<Listic> listici = lRep.findAll().get();
-
-    Listic list = listici.get(0);
+    UplaceniListicRepository lRep = locator.resolve(UplaceniListicRepository.class);
+    UplaceniListic list = lRep.findAll().get().get(0);
 
     logger.info("LIST: \n  Datum: {}\n  Dobio?: {}\n  Iznos: {}\n  Dobivam: {}\n  UkKoef: {}"
         , list.getDatumUplate()

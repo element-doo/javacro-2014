@@ -1,18 +1,17 @@
 package model.Kladionica;
 
-public class Ponuda implements java.io.Serializable {
+public class Ponuda implements java.io.Serializable,
+        com.dslplatform.patterns.AggregateRoot {
     public Ponuda() {
         _serviceLocator = com.dslplatform.client.Bootstrap.getLocator();
         _domainProxy = _serviceLocator
                 .resolve(com.dslplatform.client.DomainProxy.class);
         _crudProxy = _serviceLocator
                 .resolve(com.dslplatform.client.CrudProxy.class);
+        this.ID = 0;
         this.tip = "";
-        this.tekmaID = 0;
         this.koeficijent = java.math.BigDecimal.ZERO;
         this.istekla = false;
-        this.ListicID = 0;
-        this.Index = 0;
     }
 
     private transient final com.dslplatform.patterns.ServiceLocator _serviceLocator;
@@ -72,30 +71,241 @@ public class Ponuda implements java.io.Serializable {
     private Ponuda(
             @com.fasterxml.jackson.annotation.JacksonInject("_serviceLocator") final com.dslplatform.patterns.ServiceLocator _serviceLocator,
             @com.fasterxml.jackson.annotation.JsonProperty("URI") final String URI,
+            @com.fasterxml.jackson.annotation.JsonProperty("ID") final int ID,
             @com.fasterxml.jackson.annotation.JsonProperty("tip") final String tip,
-            @com.fasterxml.jackson.annotation.JsonProperty("tekmaURI") final String tekmaURI,
-            @com.fasterxml.jackson.annotation.JsonProperty("tekmaID") final int tekmaID,
+            @com.fasterxml.jackson.annotation.JsonProperty("tekma") final model.Kladionica.Tekma tekma,
             @com.fasterxml.jackson.annotation.JsonProperty("koeficijent") final java.math.BigDecimal koeficijent,
             @com.fasterxml.jackson.annotation.JsonProperty("istekla") final boolean istekla,
-            @com.fasterxml.jackson.annotation.JsonProperty("ishod") final Boolean ishod,
-            @com.fasterxml.jackson.annotation.JsonProperty("ListicID") final int ListicID,
-            @com.fasterxml.jackson.annotation.JsonProperty("Index") final int Index) {
+            @com.fasterxml.jackson.annotation.JsonProperty("ishod") final Boolean ishod) {
         this._serviceLocator = _serviceLocator;
         this._domainProxy = _serviceLocator
                 .resolve(com.dslplatform.client.DomainProxy.class);
         this._crudProxy = _serviceLocator
                 .resolve(com.dslplatform.client.CrudProxy.class);
         this.URI = URI;
+        this.ID = ID;
         this.tip = tip == null ? "" : tip;
-        this.tekmaURI = tekmaURI == null ? null : tekmaURI;
-        this.tekmaID = tekmaID;
+        this.tekma = tekma == null ? null : tekma;
         this.koeficijent = koeficijent == null
                 ? java.math.BigDecimal.ZERO
                 : koeficijent;
         this.istekla = istekla;
         this.ishod = ishod;
-        this.ListicID = ListicID;
-        this.Index = Index;
+    }
+
+    private int ID;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("ID")
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
+    public int getID() {
+        return ID;
+    }
+
+    private Ponuda setID(final int value) {
+        this.ID = value;
+
+        if (this.tekma != null) this.tekma.setPonudaID(value);
+        return this;
+    }
+
+    public static Ponuda find(final String uri) throws java.io.IOException {
+        return find(uri, com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static Ponuda find(
+            final String uri,
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        try {
+            return (locator != null
+                    ? locator
+                    : com.dslplatform.client.Bootstrap.getLocator())
+                    .resolve(com.dslplatform.client.CrudProxy.class)
+                    .read(Ponuda.class, uri).get();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+    }
+
+    public static java.util.List<Ponuda> find(final Iterable<String> uris)
+            throws java.io.IOException {
+        return find(uris, com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static java.util.List<Ponuda> find(
+            final Iterable<String> uris,
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        try {
+            return (locator != null
+                    ? locator
+                    : com.dslplatform.client.Bootstrap.getLocator())
+                    .resolve(com.dslplatform.client.DomainProxy.class)
+                    .find(Ponuda.class, uris).get();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+    }
+
+    public static java.util.List<Ponuda> findAll() throws java.io.IOException {
+        return findAll(null, null,
+                com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static java.util.List<Ponuda> findAll(
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        return findAll(null, null, locator);
+    }
+
+    public static java.util.List<Ponuda> findAll(
+            final Integer limit,
+            final Integer offset) throws java.io.IOException {
+        return findAll(limit, offset,
+                com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static java.util.List<Ponuda> findAll(
+            final Integer limit,
+            final Integer offset,
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        try {
+            return (locator != null
+                    ? locator
+                    : com.dslplatform.client.Bootstrap.getLocator())
+                    .resolve(com.dslplatform.client.DomainProxy.class)
+                    .findAll(Ponuda.class, limit, offset, null).get();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+    }
+
+    public static java.util.List<Ponuda> search(
+            final com.dslplatform.patterns.Specification<Ponuda> specification)
+            throws java.io.IOException {
+        return search(specification, null, null,
+                com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static java.util.List<Ponuda> search(
+            final com.dslplatform.patterns.Specification<Ponuda> specification,
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        return search(specification, null, null, locator);
+    }
+
+    public static java.util.List<Ponuda> search(
+            final com.dslplatform.patterns.Specification<Ponuda> specification,
+            final Integer limit,
+            final Integer offset) throws java.io.IOException {
+        return search(specification, limit, offset,
+                com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static java.util.List<Ponuda> search(
+            final com.dslplatform.patterns.Specification<Ponuda> specification,
+            final Integer limit,
+            final Integer offset,
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        try {
+            return (locator != null
+                    ? locator
+                    : com.dslplatform.client.Bootstrap.getLocator())
+                    .resolve(com.dslplatform.client.DomainProxy.class)
+                    .search(specification, limit, offset, null).get();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+    }
+
+    public static long count() throws java.io.IOException {
+        return count(com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static long count(
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        try {
+            return (locator != null
+                    ? locator
+                    : com.dslplatform.client.Bootstrap.getLocator())
+                    .resolve(com.dslplatform.client.DomainProxy.class)
+                    .count(Ponuda.class).get().longValue();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+    }
+
+    public static long count(
+            final com.dslplatform.patterns.Specification<Ponuda> specification)
+            throws java.io.IOException {
+        return count(specification,
+                com.dslplatform.client.Bootstrap.getLocator());
+    }
+
+    public static long count(
+            final com.dslplatform.patterns.Specification<Ponuda> specification,
+            final com.dslplatform.patterns.ServiceLocator locator)
+            throws java.io.IOException {
+        try {
+            return (locator != null
+                    ? locator
+                    : com.dslplatform.client.Bootstrap.getLocator())
+                    .resolve(com.dslplatform.client.DomainProxy.class)
+                    .count(specification).get().longValue();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+    }
+
+    private void updateWithAnother(final model.Kladionica.Ponuda result) {
+        this.URI = result.URI;
+
+        this.tip = result.tip;
+        this.tekma = result.tekma;
+        this.koeficijent = result.koeficijent;
+        this.istekla = result.istekla;
+        this.ishod = result.ishod;
+        this.ID = result.ID;
+    }
+
+    public Ponuda persist() throws java.io.IOException {
+        final Ponuda result;
+        try {
+            result = this.URI == null
+                    ? _crudProxy.create(this).get()
+                    : _crudProxy.update(this).get();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
+        this.updateWithAnother(result);
+        return this;
+    }
+
+    public Ponuda delete() throws java.io.IOException {
+        try {
+            return _crudProxy.delete(Ponuda.class, URI).get();
+        } catch (final InterruptedException e) {
+            throw new java.io.IOException(e);
+        } catch (final java.util.concurrent.ExecutionException e) {
+            throw new java.io.IOException(e);
+        }
     }
 
     private String tip;
@@ -117,18 +327,8 @@ public class Ponuda implements java.io.Serializable {
 
     private model.Kladionica.Tekma tekma;
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public model.Kladionica.Tekma getTekma() throws java.io.IOException {
-        if (tekma != null && !tekma.getURI().equals(tekmaURI) || tekma == null
-                && tekmaURI != null)
-            try {
-                tekma = _crudProxy.read(model.Kladionica.Tekma.class, tekmaURI)
-                        .get();
-            } catch (final InterruptedException e) {
-                throw new java.io.IOException(e);
-            } catch (final java.util.concurrent.ExecutionException e) {
-                throw new java.io.IOException(e);
-            }
+    @com.fasterxml.jackson.annotation.JsonProperty("tekma")
+    public model.Kladionica.Tekma getTekma() {
         return tekma;
     }
 
@@ -136,36 +336,9 @@ public class Ponuda implements java.io.Serializable {
         if (value == null)
             throw new IllegalArgumentException(
                     "Property \"tekma\" cannot be null!");
-
-        if (value != null && value.getURI() == null)
-            throw new IllegalArgumentException(
-                    "Reference \"Kladionica.Tekma\" for property \"tekma\" must be persisted before it's assigned");
         this.tekma = value;
 
-        this.tekmaURI = value.getURI();
-
-        this.tekmaID = value.getID();
-        return this;
-    }
-
-    private String tekmaURI;
-
-    @com.fasterxml.jackson.annotation.JsonProperty("tekmaURI")
-    public String getTekmaURI() {
-        return this.tekmaURI;
-    }
-
-    private int tekmaID;
-
-    @com.fasterxml.jackson.annotation.JsonProperty("tekmaID")
-    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-    public int getTekmaID() {
-        return tekmaID;
-    }
-
-    private Ponuda setTekmaID(final int value) {
-        this.tekmaID = value;
-
+        if (this.tekma != null) this.tekma.setPonudaID(this.ID);
         return this;
     }
 
@@ -209,34 +382,6 @@ public class Ponuda implements java.io.Serializable {
 
     public Ponuda setIshod(final Boolean value) {
         this.ishod = value;
-
-        return this;
-    }
-
-    private int ListicID;
-
-    @com.fasterxml.jackson.annotation.JsonProperty("ListicID")
-    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-    public int getListicID() {
-        return ListicID;
-    }
-
-    public Ponuda setListicID(final int value) {
-        this.ListicID = value;
-
-        return this;
-    }
-
-    private int Index;
-
-    @com.fasterxml.jackson.annotation.JsonProperty("Index")
-    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-    public int getIndex() {
-        return Index;
-    }
-
-    public Ponuda setIndex(final int value) {
-        this.Index = value;
 
         return this;
     }
