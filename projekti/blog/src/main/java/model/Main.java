@@ -2,6 +2,11 @@ package model;
 
 import java.io.IOException;
 
+import model.blog.KorisnickiPodaci;
+import model.blog.Korisnik;
+import model.blog.Post;
+
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 
 import com.dslplatform.client.Bootstrap;
@@ -12,10 +17,19 @@ public class Main {
         // An instance of Service Locator.
         // You can use it to fetch instances of repositories.
         final ServiceLocator locator = init();
+        Logger logger = locator.resolve(Logger.class);
+        logger.info("Filling or model with some data...");
+        new Korisnik().setKorisnickiPodaci(new KorisnickiPodaci("pero@example.com", "Pero")).persist();
 
-
+        Korisnik pero = new Korisnik.traziPoEmailu("pero@example.com").search().get(0);
+        Post post = new Post()
+	        .setAutor(pero)
+	        .setDatumObjave(LocalDate.now())
+	        .setNaslov("Prvi Post")
+	        .setSadrzaj("Evo samo da bude nekog teksta...")
+	        .persist();
         // TODO: Your code here
-
+        logger.info("Finished.");
 
         // Perform cleanup.
         shutdown(locator);
