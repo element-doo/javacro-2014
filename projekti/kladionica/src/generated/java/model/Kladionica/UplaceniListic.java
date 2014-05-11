@@ -5,6 +5,7 @@ public final class UplaceniListic implements
     @com.fasterxml.jackson.annotation.JsonCreator
     public UplaceniListic(
             @com.fasterxml.jackson.annotation.JsonProperty("URI") final String URI,
+            @com.fasterxml.jackson.annotation.JsonProperty("ID") final int ID,
             @com.fasterxml.jackson.annotation.JsonProperty("parovi") final java.util.List<model.Kladionica.Ponuda> parovi,
             @com.fasterxml.jackson.annotation.JsonProperty("datumUplate") final org.joda.time.LocalDate datumUplate,
             @com.fasterxml.jackson.annotation.JsonProperty("iznos") final java.math.BigDecimal iznos,
@@ -12,6 +13,7 @@ public final class UplaceniListic implements
             @com.fasterxml.jackson.annotation.JsonProperty("moguciDobitak") final java.math.BigDecimal moguciDobitak,
             @com.fasterxml.jackson.annotation.JsonProperty("dobitniLisic") final Boolean dobitniLisic) {
         this.URI = URI;
+        this.ID = ID;
         this.parovi = parovi;
         if (parovi == null)
             throw new IllegalArgumentException(
@@ -32,6 +34,7 @@ public final class UplaceniListic implements
 
     public UplaceniListic() {
         this.URI = null;
+        this.ID = 0;
         this.parovi = null;
         this.datumUplate = null;
         this.iznos = null;
@@ -68,6 +71,13 @@ public final class UplaceniListic implements
     }
 
     private static final long serialVersionUID = 0x0097000a;
+
+    private final int ID;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("ID")
+    public int getID() {
+        return this.ID;
+    }
 
     private final java.util.List<model.Kladionica.Ponuda> parovi;
 
@@ -106,6 +116,90 @@ public final class UplaceniListic implements
 
     public Boolean getDobitniLisic() {
         return this.dobitniLisic;
+    }
+
+    public static class findByID implements java.io.Serializable,
+            com.dslplatform.patterns.Specification<UplaceniListic> {
+        public findByID(
+                final int ID) {
+            setID(ID);
+        }
+
+        public findByID() {
+            this.ID = 0;
+        }
+
+        private static final long serialVersionUID = 0x0097000a;
+
+        private int ID;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("ID")
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
+        public int getID() {
+            return ID;
+        }
+
+        public findByID setID(final int value) {
+            this.ID = value;
+
+            return this;
+        }
+
+        public java.util.List<UplaceniListic> search()
+                throws java.io.IOException {
+            return search(null, null,
+                    com.dslplatform.client.Bootstrap.getLocator());
+        }
+
+        public java.util.List<UplaceniListic> search(
+                final com.dslplatform.patterns.ServiceLocator locator)
+                throws java.io.IOException {
+            return search(null, null, locator);
+        }
+
+        public java.util.List<UplaceniListic> search(
+                final Integer limit,
+                final Integer offset) throws java.io.IOException {
+            return search(limit, offset,
+                    com.dslplatform.client.Bootstrap.getLocator());
+        }
+
+        public java.util.List<UplaceniListic> search(
+                final Integer limit,
+                final Integer offset,
+                final com.dslplatform.patterns.ServiceLocator locator)
+                throws java.io.IOException {
+            try {
+                return (locator != null
+                        ? locator
+                        : com.dslplatform.client.Bootstrap.getLocator())
+                        .resolve(com.dslplatform.client.DomainProxy.class)
+                        .search(this, limit, offset, null).get();
+            } catch (final InterruptedException e) {
+                throw new java.io.IOException(e);
+            } catch (final java.util.concurrent.ExecutionException e) {
+                throw new java.io.IOException(e);
+            }
+        }
+
+        public long count() throws java.io.IOException {
+            return count(com.dslplatform.client.Bootstrap.getLocator());
+        }
+
+        public long count(final com.dslplatform.patterns.ServiceLocator locator)
+                throws java.io.IOException {
+            try {
+                return (locator != null
+                        ? locator
+                        : com.dslplatform.client.Bootstrap.getLocator())
+                        .resolve(com.dslplatform.client.DomainProxy.class)
+                        .count(this).get().longValue();
+            } catch (final InterruptedException e) {
+                throw new java.io.IOException(e);
+            } catch (final java.util.concurrent.ExecutionException e) {
+                throw new java.io.IOException(e);
+            }
+        }
     }
 
     public static UplaceniListic find(final String uri)
